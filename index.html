@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+  #response-container {
+    padding: 16px;
+  }
+
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+.user-message {
+  margin: 8px;
+  padding: 8px;
+  background-color: #f1f0f0;
+  border-radius: 10px 10px 0 10px;
+  display: inline-block;
+  max-width: 60%;
+  text-align: left;
+  clear: both;
+}
+
+.assistant-message {
+  margin: 8px;
+  padding: 8px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 10px
+
+}
+      #question-form {
+        display: flex;
+        justify-content: center;
+        margin-top: 20vh;
+      }
+
+      #question-input {
+        border: none;
+        border-bottom: 2px solid #777;
+        font-size: 20px;
+        padding: 10px;
+        width: 300px;
+        margin-right: 10px;
+      }
+
+      #question-input:focus {
+        outline: none;
+        border-color: #555;
+      }
+
+      #ask-button {
+        border: none;
+        border-radius: 5px;
+        font-size: 20px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        opacity: 1;
+      }
+
+      #ask-button:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+
+      #ask-button.spinner {
+        animation: spin 1s linear infinite;
+      }
+
+      #response-container {
+        margin: 50px 0;
+      }
+
+      #response-container pre {
+        background-color: #f5f5f5;
+        border-radius: 5px;
+        padding: 10px;
+        overflow-x: auto;
+      }
+
+      #response-container pre code {
+        font-size: 16px;
+      }
+
+		#dots-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #333;
+  margin: 0 4px;
+  animation: dots 1s infinite;
+  animation-delay: 0s;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+code {
+ color: black;
+}
+
+@keyframes dots {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(10px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+}
+
+
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+    <meta charset="UTF-8">
+    <title>ChatGPT Electron App</title>
+  </head>
+  <body>
+    <form id="question-form">
+      <label>
+        How can I help?
+        <input type="text" id="question-input">
+      </label>
+      <button type="submit" id="ask-button">Ask</button>
+	  <div id="dots-container">
+  <span class="dot"></span>
+  <span class="dot"></span>
+  <span class="dot"></span>
+</div>
+
+    </form>
+
+    <div id="response-container"></div>
+ <script src="renderer.js"></script>
+  </body>
+</html>

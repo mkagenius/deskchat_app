@@ -1,0 +1,22 @@
+{
+  "name": "deskchat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@clack/prompts": "^0.6.3",
+    "highlight.js": "^11.7.0",
+    "openai": "^3.2.1"
+  },
+  "devDependencies": {
+    "electron": "^23.2.0",
+    "electron-packager": "^17.1.1"
+  }
+}
