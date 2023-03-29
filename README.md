@@ -1,6 +1,7 @@
 
+![demo](deskchat_app_demo.png)
 ### 1. Clone this first
-### 2. Put your own API keys
+### 2. Put your own OpenAI API keys in rendered.js
 ### 3. Install dependencies
 
 #### Install openai clack/prompts and electron
