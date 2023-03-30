@@ -2,6 +2,9 @@
 
 const { intro, isCancel, outro, spinner, text } = require('@clack/prompts');
 const { Configuration, OpenAIApi } = require('openai');
+const { Readable } = require('stream')
+const EventSource = require("./eventsource.js");
+
 const hljs = require('highlight.js');
 hljs.highlightAll();
 
@@ -19,9 +22,11 @@ const askButton = questionForm.querySelector('button');
 const toggleDots = (show) => {
   const dotsContainer = document.getElementById('dots-container');
   if (show) {
-    dotsContainer.style.display = 'flex';
+	dotsContainer.classList.remove("hide");
+
   } else {
-    dotsContainer.style.display = 'none';
+	dotsContainer.classList.add("hide");
+
   }
 };
 
@@ -38,51 +43,34 @@ const askChatGPT = async (question, messages) => {
       content: m,
     });
   }
-  prompt.messages.push({
-    role: 'user',
-    content: question,
-  });
-
-  const response = await openaiClient.createChatCompletion({
+const payload = JSON.stringify({
     model: 'gpt-3.5-turbo',
     messages: prompt.messages,
+    stream: true,
   });
 
-  return response.data.choices[0].message.content;
-};
+  return new Promise((resolve) => {
+    const es = new EventSource('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${OPENAI_API_KEY}`,
+      },
+      payload
+    });
+	let ans = ''
+    es.onmessage = (e) =>  {
+      if (e.data == "[DONE]") {
+        es.close();
+        resolve(ans);
+      } else {
+        let delta = JSON.parse(e.data).choices[0].delta.content;
 
-const messages = [];
-toggleDots(false);
-questionForm.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  const question = questionInput.value;
-  if (!question || question.trim().length === 0) return;
-  askButton.disabled = true;
-  const s = spinner();
-  s.start('Thinking...');
-toggleDots(true);
-  const answer = await askChatGPT(question, messages);
-toggleDots(false);
-  console.log("answer: ", answer);
-  messages.push({role: 'user', content: question});
-  if (answer) {
- responseContainer.innerHTML = answer.replace(/```([a-zA-Z+]+)?\n([\s\S]*?)```|(?<!`)`([\s\S]*?)(?<!`)`|((?:(?!```|`)[\s\S])+)/g, (match, p1, p2, p3, p4) => {
-    if (p1) {
-      const language = p1.match(/^([a-z]+)/i)?.[1];
-      return `<pre><code class="language-${language}">${hljs.highlight(p2, { language }).value.replace(/\n/g, '<br>')}</code></pre>`;
-    } else if (p2) {
-      return `<pre><code class="language-plaintext">${hljs.highlightAuto(p2).value.replace(/\n/g, '<br>')}</code></pre>`;
-    } else if (p3) {
-      return `<code class="language-plaintext">${hljs.highlightAuto(p3).value}</code>`;
-    } else {
-      return `<p>${p4.replace(/\n/g, '<br>')}</p>`
-    }
-});
-
-  messages.push({ role: 'assistant', content: answer });
-  console.log(messages);
-
-  responseContainer.innerHTML = [...messages].reverse()
+        if (delta) {
+		  if (delta.length > 1) ans += delta;
+		  else ans += delta;
+         // messages.push({ role: 'assistant', content: delta });
+		  responseContainer.innerHTML = [...messages, { role: 'assistant', content: ans }].reverse()
     .map((message) => {
       const { role, content } = message;
       const cssClass = role === 'user' ? 'user-message' : 'assistant-message';
@@ -109,7 +97,31 @@ toggleDots(false);
       )}</div>`;
     })
     .join('');
- 
+}
+}
+};
+});
+};
+
+
+const messages = [];
+toggleDots(false);
+questionForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const question = questionInput.value;
+  if (!question || question.trim().length === 0) return;
+  askButton.disabled = true;
+  const s = spinner();
+  s.start('Thinking...');
+toggleDots(true);
+  messages.push({role: 'user', content: question});
+  const answer = await askChatGPT(question, messages);
+toggleDots(false);
+  console.log("answer: ", answer);
+  if (answer) {
+  messages.push({ role: 'assistant', content: answer });
+  console.log(messages);
+
 }else {
  console.log("No answer from chatgpt");
 }
@@ -127,4 +139,3 @@ askButton.style.padding = '12px 16px';
 askButton.style.backgroundColor = '#fff';
 askButton.style.color = '#444';
 askButton.style.borderRadius = '4px';
-

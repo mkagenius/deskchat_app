@@ -98,6 +98,14 @@
   margin-top: 16px;
 }
 
+#dots-container {
+  visibility: visible;
+}
+
+#dots-container.hide {
+  visibility: hidden;
+}
+
 .dot {
   width: 10px;
   height: 10px;
@@ -119,6 +127,8 @@
 code {
  color: black;
 }
+
+
 
 @keyframes dots {
   0% {
@@ -142,11 +152,38 @@ code {
           transform: rotate(360deg);
         }
       }
-    </style>
+
+
+
+
+#wrapper {
+  display: flex;
+  align-items: center;
+flex-direction: row;
+	justify-content: center;
+}
+
+#image-container {
+  margin-right: 10px;
+  display: flex;
+  width: 120px;
+}
+
+#form {
+	display: flex;
+}
+
+    
+</style>
     <meta charset="UTF-8">
     <title>ChatGPT Electron App</title>
-  </head>
-  <body>
+
+	<body>
+	<div id="wrapper">
+	<div id="image-container">
+      <img src="happy_robot.jpeg" alt="Your Image" width="120">
+    </div>
+	<div id="form">
     <form id="question-form">
       <label>
         How can I help?
@@ -154,14 +191,16 @@ code {
       </label>
       <button type="submit" id="ask-button">Ask</button>
 	  <div id="dots-container">
-  <span class="dot"></span>
-  <span class="dot"></span>
-  <span class="dot"></span>
-</div>
+  		<span class="dot"></span>
+  		<span class="dot"></span>
+  		<span class="dot"></span>
+	  </div>
 
     </form>
-
+	</div>
+	</div>
     <div id="response-container"></div>
  <script src="renderer.js"></script>
   </body>
+
 </html>
